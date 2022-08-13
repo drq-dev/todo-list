@@ -30,17 +30,6 @@ app.post("/todos", (req, res) => {
 
   res.send(todo);
 });
-// app.post("/todos", (req, res) => {
-//   return res.send("POST HTTP method on user resource");
-// });
-
-// app.put("/todos/:todoId", (req, res) => {
-//   return res.send(`PUT HTTP method on todos/${req.params.todoId} resource`);
-// });
-
-// app.delete("/todos/:todoId", (req, res) => {
-//   return res.send(`DELETE HTTP method on todos/${req.params.todoId} resource`);
-// });
 
 app.listen(process.env.PORT, () =>
   console.log(
