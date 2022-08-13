@@ -1,10 +1,10 @@
-import { Todo } from "../types/Todo";
+import { Todo } from "./todo";
+import mongoose from "mongoose";
 
-const todos = [
-  new Todo({ description: "First Todo" }),
-  new Todo({ description: "Second Todo" }),
-];
+const models = { Todo };
 
-const models = { todos: todos };
+const connectDb = () => {
+  return mongoose.connect(process.env.DATABASE_URL);
+};
 
-export { models };
+export { models, connectDb };

@@ -4,32 +4,33 @@ import { TodoStatusEnum } from "../types/TodoStatus";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  return res.send(req.context.models.todos);
+router.get("/", async (req, res) => {
+  const todos = await req.context.models.Todo.find();
+  return res.send(todos);
 });
 
-router.get("/:todoId", (req, res) => {
-  return res.send(
-    req.context.models.todos.filter((todo) => todo.id === req.params.todoId)
-  );
+router.get("/:todoId", async (req, res) => {
+  const todo = await req.context.models.Todo.findById(req.params.todoId);
+  return res.send(todo);
 });
 
-router.post("/", (req, res) => {
-  const todo = new Todo({ description: req.body.description });
+router.post("/", async (req, res) => {
+  const todo = await req.context.models.Todo.create({
+    description: req.body.description,
+    status: TodoStatusEnum.OPEN,
+  });
 
-  req.context.models.todos.push(todo);
-
-  res.send(todo);
+  return res.send(todo);
 });
 
-router.patch("/tick-todo/:todoId", (req, res) => {
-  const todo = req.context.models.todos.filter(
-    (todo) => todo.id === req.params.todoId
-  );
+router.patch("/tick-todo/:todoId", async (req, res) => {
+  const todo = await req.context.models.Todo.findById(req.params.todoId);
+  if (todo) {
+    todo.set({ status: TodoStatusEnum.TICKED_OFF });
+    todo.save();
+  }
 
-  if (todo.length != 0) todo[0].status = TodoStatusEnum.TICKED_OFF;
-
-  res.send(todo);
+  return res.send(todo);
 });
 
 export { router };
