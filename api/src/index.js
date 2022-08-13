@@ -4,6 +4,7 @@ import { Todo } from "./types/Todo";
 import { TodoStatusEnum } from "./types/TodoStatus";
 import cors from "cors";
 import express from "express";
+import { models } from "./models/";
 
 const app = express();
 
@@ -11,30 +12,35 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const todos = [
-  new Todo({ description: "First Todo" }),
-  new Todo({ description: "Second Todo" }),
-];
+app.use((req, res, next) => {
+  req.context = {
+    models,
+  };
+  next();
+});
 
 app.get("/todos", (req, res) => {
-  return res.send(todos);
+  return res.send(req.context.models.todos);
 });
 
 app.get("/todos/:todoId", (req, res) => {
-  return res.send(todos.filter((todo) => todo.id === req.params.todoId));
+  return res.send(
+    req.context.models.todos.filter((todo) => todo.id === req.params.todoId)
+  );
 });
 
 app.post("/todos", (req, res) => {
   const todo = new Todo({ description: req.body.description });
 
-  todos.push(todo);
+  req.context.models.todos.push(todo);
 
   res.send(todo);
 });
 
 app.patch("/todos/tick-todo/:todoId", (req, res) => {
-  const todo = todos.filter((todo) => todo.id === req.params.todoId);
-  console.log("todo:", todo);
+  const todo = req.context.models.todos.filter(
+    (todo) => todo.id === req.params.todoId
+  );
 
   if (todo.length != 0) todo[0].status = TodoStatusEnum.TICKED_OFF;
 
