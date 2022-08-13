@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import { Todo } from "./types/Todo";
+import { TodoStatusEnum } from "./types/TodoStatus";
 import cors from "cors";
 import express from "express";
 
@@ -27,6 +28,15 @@ app.post("/todos", (req, res) => {
   const todo = new Todo({ description: req.body.description });
 
   todos.push(todo);
+
+  res.send(todo);
+});
+
+app.patch("/todos/tick-todo/:todoId", (req, res) => {
+  const todo = todos.filter((todo) => todo.id === req.params.todoId);
+  console.log("todo:", todo);
+
+  if (todo.length != 0) todo[0].status = TodoStatusEnum.TICKED_OFF;
 
   res.send(todo);
 });
