@@ -1,31 +1,35 @@
 import "dotenv/config";
 
+import { Todo } from "./types/Todo";
 import cors from "cors";
 import express from "express";
 
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const todos = {
-  1: {
-    id: "1",
-    description: "First Todo",
-  },
-  2: {
-    id: "2",
-    description: "Second Todo",
-  },
-};
+const todos = [
+  new Todo({ description: "First Todo" }),
+  new Todo({ description: "Second Todo" }),
+];
 
 app.get("/todos", (req, res) => {
-  return res.send(Object.values(todos));
+  return res.send(todos);
 });
 
 app.get("/todos/:todoId", (req, res) => {
-  return res.send(todos[req.params.todoId]);
+  return res.send(todos.filter((todo) => todo.id === req.params.todoId));
 });
 
+app.post("/todos", (req, res) => {
+  const todo = new Todo({ description: req.body.description });
+
+  todos.push(todo);
+
+  res.send(todo);
+});
 // app.post("/todos", (req, res) => {
 //   return res.send("POST HTTP method on user resource");
 // });
