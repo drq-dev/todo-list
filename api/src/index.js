@@ -1,10 +1,9 @@
 import "dotenv/config";
 
-import { Todo } from "./types/Todo";
-import { TodoStatusEnum } from "./types/TodoStatus";
 import cors from "cors";
 import express from "express";
 import { models } from "./models/";
+import { routes } from "./routes";
 
 const app = express();
 
@@ -19,33 +18,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/todos", (req, res) => {
-  return res.send(req.context.models.todos);
-});
-
-app.get("/todos/:todoId", (req, res) => {
-  return res.send(
-    req.context.models.todos.filter((todo) => todo.id === req.params.todoId)
-  );
-});
-
-app.post("/todos", (req, res) => {
-  const todo = new Todo({ description: req.body.description });
-
-  req.context.models.todos.push(todo);
-
-  res.send(todo);
-});
-
-app.patch("/todos/tick-todo/:todoId", (req, res) => {
-  const todo = req.context.models.todos.filter(
-    (todo) => todo.id === req.params.todoId
-  );
-
-  if (todo.length != 0) todo[0].status = TodoStatusEnum.TICKED_OFF;
-
-  res.send(todo);
-});
+app.use("/todos", routes.todos);
 
 app.listen(process.env.PORT, () =>
   console.log(
