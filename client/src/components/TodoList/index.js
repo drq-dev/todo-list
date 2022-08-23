@@ -86,7 +86,7 @@ const TodoList = () => {
           <button
             type="button"
             onClick={() => setCreateNewTodo(true)}
-            className="bg-blue-500 hover:bg-blue-400 text-white rounded p-1 "
+            className="bg-blue-500 hover:bg-blue-400 text-white rounded py-1 px-2 "
           >
             + Neues Todo
           </button>
