@@ -68,6 +68,9 @@ const TodoList = () => {
     event.preventDefault();
   };
 
+  const handleTextInputBlurEvent = () => {
+    setCreateNewTodo(false);
+  };
   return (
     <section
       aria-labelledby="heading"
@@ -94,6 +97,7 @@ const TodoList = () => {
             required
             name="textInput"
             className="border bg-slate-50 w-full"
+            onBlur={handleTextInputBlurEvent}
           ></input>
         )}
       </form>
