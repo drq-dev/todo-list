@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 
 import { ListItem } from "./ListItem";
 import { TodoStatusEnum } from "../../types/TodoStatus";
@@ -22,6 +22,7 @@ dummyTodoList.set("t3", {
 
 const TodoList = () => {
   const [todos, setTodos] = useState(dummyTodoList);
+  const [createNewTodo, setCreateNewTodo] = useState(false);
 
   const tickOff = (todo) => {
     const newTodoList = new Map(todos);
@@ -42,6 +43,31 @@ const TodoList = () => {
     return listItems;
   };
 
+  const createNewTodoInputId = useRef(null);
+  useLayoutEffect(() => {
+    if (createNewTodo) createNewTodoInputId.current.focus();
+  }, [createNewTodo, createNewTodoInputId]);
+
+  const addNewTodo = (event) => {
+    const description = event.target.elements.textInput.value;
+    const newTodoList = new Map(todos);
+    /**
+     * Currently still using the description as ID. This is changed when the API is bound to the frontend. Then the API  determines the ID.
+     */
+    /**
+     * TODO: Prevent dublicated entries
+     */
+    newTodoList.set(description, {
+      _id: description,
+      description: description,
+      status: TodoStatusEnum.OPEN,
+    });
+    setTodos(newTodoList);
+    setCreateNewTodo(false);
+
+    event.preventDefault();
+  };
+
   return (
     <section
       aria-labelledby="heading"
@@ -51,6 +77,26 @@ const TodoList = () => {
         Todo List
       </h1>
       <ul className="mt-4">{generateListItems(todos)}</ul>
+
+      <form onSubmit={addNewTodo} className="mt-2">
+        {!createNewTodo ? (
+          <button
+            type="button"
+            onClick={() => setCreateNewTodo(true)}
+            className="bg-blue-500 hover:bg-blue-400 text-white rounded p-1 "
+          >
+            + Neues Todo
+          </button>
+        ) : (
+          <input
+            ref={createNewTodoInputId}
+            type="text"
+            required
+            name="textInput"
+            className="border bg-slate-50 w-full"
+          ></input>
+        )}
+      </form>
     </section>
   );
 };
